@@ -1,0 +1,6 @@
+@where_is_waldo_api_csharp_HostAddress = http://localhost:5039
+
+GET {{where_is_waldo_api_csharp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
