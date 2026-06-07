@@ -5,7 +5,7 @@ namespace WheresWaldoApi.Services;
 
 public interface IImageService
 {
-  Task<List<Image>> GetAllImagesAsync();
+  Task<List<ImageListItemDto>> GetAllImagesAsync();
 
   Task<ImageDetailsDto?> GetImageByIdAsync(Guid id);
 

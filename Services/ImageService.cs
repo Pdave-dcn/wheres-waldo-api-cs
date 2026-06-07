@@ -14,49 +14,54 @@ public class ImageService: IImageService
     _context = context;
   }
 
-  public async Task<List<Image>> GetAllImagesAsync()
+  public async Task<List<ImageListItemDto>> GetAllImagesAsync()
   {
     return await _context.Images
       .AsNoTracking()
+      .Select(i => new ImageListItemDto
+      {
+        Id = i.Id,
+        Name = i.Name,
+        Description = i.Description,
+        ImageUrl = i.ImageUrl
+      })
       .ToListAsync();
   }
 
   public async Task<ImageDetailsDto?> GetImageByIdAsync(Guid id)
   {
-    var image = await _context.Images
-        .AsNoTracking()
-        .Include(i => i.Characters)
-        .FirstOrDefaultAsync(i => i.Id == id);
-
-    if (image is null) return null;
-
-    return new ImageDetailsDto
+    return await _context.Images
+    .AsNoTracking()
+    .Where(i => i.Id == id)
+    .Select(i => new ImageDetailsDto
     {
-      Id = image.Id,
-      Name = image.Name,
-      Description = image.Description,
-      ImageUrl = image.ImageUrl,
-      OriginalWidth = image.OriginalWidth,
-      OriginalHeight = image.OriginalHeight,
-      Characters = image.Characters.Select(c => new CharacterDto
-      {
-        Id = c.Id,
-        CharacterType = c.CharacterType.ToString(),
-        TargetXRatio = c.TargetXRatio,
-        TargetYRatio = c.TargetYRatio,
-        ToleranceXRatio = c.ToleranceXRatio,
-        ToleranceYRatio = c.ToleranceYRatio,
-      }).ToList()
-    };
+        Id = i.Id,
+        Name = i.Name,
+        Description = i.Description,
+        ImageUrl = i.ImageUrl,
+        OriginalWidth = i.OriginalWidth,
+        OriginalHeight = i.OriginalHeight,
+
+        Characters = i.Characters.Select(c => new CharacterDto
+        {
+            Id = c.Id,
+            CharacterType = c.CharacterType.ToString(),
+            TargetXRatio = c.TargetXRatio,
+            TargetYRatio = c.TargetYRatio,
+            ToleranceXRatio = c.ToleranceXRatio,
+            ToleranceYRatio = c.ToleranceYRatio,
+            ImageId = c.ImageId
+        }).ToList()
+    })
+    .FirstOrDefaultAsync();
+    
   }
 
   public async Task<Image> CreateImageAsync(CreateImageDto dto)
   {
-    var exists = await _context.Images.FirstOrDefaultAsync(i => i.Name == dto.Name);
-    if (exists is not null)
-    {
-      throw new Exception("Image with the same name already exists");
-    }
+    bool exists = await _context.Images.AnyAsync(i => i.Name == dto.Name);
+    if (exists)
+      throw new InvalidOperationException("Image with the same name already exists");
     
     var image = new Image
     {
