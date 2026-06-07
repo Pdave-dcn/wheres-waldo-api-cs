@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WheresWaldoApi.DTOs;
 
+// todo: Update the name to AddImageDto instead
 public class CreateImageDto
 {
   [Required]

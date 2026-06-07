@@ -21,9 +21,33 @@ public class ImageService: IImageService
       .ToListAsync();
   }
 
-  public async Task<Image?> GetImageByIdAsync(Guid id)
+  public async Task<ImageDetailsDto?> GetImageByIdAsync(Guid id)
   {
-    return await _context.Images.FindAsync(id);
+    var image = await _context.Images
+        .AsNoTracking()
+        .Include(i => i.Characters)
+        .FirstOrDefaultAsync(i => i.Id == id);
+
+    if (image is null) return null;
+
+    return new ImageDetailsDto
+    {
+      Id = image.Id,
+      Name = image.Name,
+      Description = image.Description,
+      ImageUrl = image.ImageUrl,
+      OriginalWidth = image.OriginalWidth,
+      OriginalHeight = image.OriginalHeight,
+      Characters = image.Characters.Select(c => new CharacterDto
+      {
+        Id = c.Id,
+        CharacterType = c.CharacterType.ToString(),
+        TargetXRatio = c.TargetXRatio,
+        TargetYRatio = c.TargetYRatio,
+        ToleranceXRatio = c.ToleranceXRatio,
+        ToleranceYRatio = c.ToleranceYRatio,
+      }).ToList()
+    };
   }
 
   public async Task<Image> CreateImageAsync(CreateImageDto dto)

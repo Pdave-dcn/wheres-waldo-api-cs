@@ -1,12 +1,29 @@
 namespace WheresWaldoApi.Models;
 
+public enum CharacterType
+{
+    Waldo,
+    Wenda,
+    Odlaw,
+    Wizard
+}
+
+
 public class Character
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    public string Name { get; set; } = "";
+    public CharacterType CharacterType { get; set; }
 
-    public double XCoordinate { get; set; }
+    public double TargetXRatio { get; set; }
 
-    public double YCoordinate { get; set; }
+    public double TargetYRatio { get; set; }
+
+    public double ToleranceXRatio{get; set;}
+
+    public double ToleranceYRatio{get; set;}
+
+    public Guid ImageId{get; set;}
+
+    public Image Image {get; set;} = null!;
 }

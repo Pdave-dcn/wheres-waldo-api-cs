@@ -1,6 +1,6 @@
-namespace WheresWaldoApi.Models;
+namespace WheresWaldoApi.DTOs;
 
-public class Image
+public class ImageDetailsDto
 {
     public Guid Id { get; set; }
 
@@ -10,11 +10,9 @@ public class Image
 
     public string ImageUrl { get; set; } = string.Empty;
 
-    public string PublicId { get; set; } = string.Empty;
-
     public int OriginalWidth { get; set; }
 
     public int OriginalHeight { get; set; }
 
-    public ICollection<Character> Characters {get; set;} = [];
+    public List<CharacterDto> Characters { get; set; } = [];
 }

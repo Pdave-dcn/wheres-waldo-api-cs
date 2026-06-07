@@ -10,29 +10,33 @@ public class AppDbContext : DbContext
     {
     }
 
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    base.OnModelCreating(modelBuilder);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
 
-    modelBuilder.Entity<Image>()
-        .HasIndex(i => i.Name)
-        .IsUnique();
+        var image = modelBuilder.Entity<Image>();
 
-    modelBuilder.Entity<Image>()
-        .HasIndex(i => i.ImageUrl)
-        .IsUnique();
+        image.HasIndex(i => i.Name).IsUnique();
+        image.HasIndex(i => i.ImageUrl).IsUnique();
+        image.HasIndex(i => i.PublicId).IsUnique();
 
-    modelBuilder.Entity<Image>()
-        .HasIndex(i => i.PublicId)
-        .IsUnique();
+        var character = modelBuilder.Entity<Character>();
 
+        character
+            .Property(c => c.CharacterType)
+            .HasConversion<string>();
 
-    // var image = modelBuilder.Entity<Image>();
+        character
+            .HasIndex(c => new {c.ImageId, c.CharacterType})
+            .IsUnique();
 
-    // image.HasIndex(i => i.Name).IsUnique();
-    // image.HasIndex(i => i.ImageUrl).IsUnique();
-    // image.HasIndex(i => i.PublicId).IsUnique();
-}
+        character
+            .HasOne(c => c.Image)
+            .WithMany(i => i.Characters)
+            .HasForeignKey(c => c.ImageId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 
     public DbSet<Image> Images { get; set; }
+    public DbSet<Character> Characters {get; set;}
 }

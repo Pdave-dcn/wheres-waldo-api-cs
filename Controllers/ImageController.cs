@@ -45,7 +45,7 @@ public class ImageController: ControllerBase
     nameof(GetImageById),
     new { id = image.Id },
     image
-);
+    );
   }
 
 }

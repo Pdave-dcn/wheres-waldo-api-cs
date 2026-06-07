@@ -1,9 +1,13 @@
 using WheresWaldoApi.Models;
+using WheresWaldoApi.DTOs;
+
 
 namespace WheresWaldoApi.Services;
 
 public interface ICharacterService
 {
-    string GetCharacterName();
-    Character GetCharacter();
+    
+    Task<CharacterDto?> GetCharacterByIdAsync(Guid id);
+
+    Task<CharacterDto> AddCharacterAsync(AddCharacterDto dto);
 }
