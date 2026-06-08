@@ -23,9 +23,26 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     );
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy.WithOrigins(
+            builder.Configuration
+                .GetSection("AllowedOrigins")
+                .Get<string[]>()!
+        );
+
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+
+app.UseCors("FrontendPolicy");
 
 app.MapControllers();
 
