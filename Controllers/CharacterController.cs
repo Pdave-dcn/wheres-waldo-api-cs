@@ -23,11 +23,7 @@ public class CharacterController: ControllerBase
     _logger.LogInformation("Getting character with ID: {CharacterId}", id);
 
     var character = await _characterService.GetCharacterByIdAsync(id);
-    if (character is null)
-    {
-      _logger.LogWarning("Character with ID: {CharacterId} not found.", id);
-      return NotFound();
-    }
+  
     _logger.LogInformation("Found character: {CharacterName}", character.CharacterType);
     return Ok(character);
   }

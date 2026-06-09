@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WheresWaldoApi.Data;
 using WheresWaldoApi.Models;
 using WheresWaldoApi.DTOs;
+using WheresWaldoApi.Exceptions;
 
 namespace WheresWaldoApi.Services;
 
@@ -28,32 +29,34 @@ public class ImageService: IImageService
       .ToListAsync();
   }
 
-  public async Task<ImageDetailsDto?> GetImageByIdAsync(Guid id)
+  public async Task<ImageDetailsDto> GetImageByIdAsync(Guid id)
   {
-    return await _context.Images
+    var image = await _context.Images
     .AsNoTracking()
     .Where(i => i.Id == id)
     .Select(i => new ImageDetailsDto
     {
-        Id = i.Id,
-        Name = i.Name,
-        Description = i.Description,
-        ImageUrl = i.ImageUrl,
-        OriginalWidth = i.OriginalWidth,
-        OriginalHeight = i.OriginalHeight,
+      Id = i.Id,
+      Name = i.Name,
+      Description = i.Description,
+      ImageUrl = i.ImageUrl,
+      OriginalWidth = i.OriginalWidth,
+      OriginalHeight = i.OriginalHeight,
 
-        Characters = i.Characters.Select(c => new CharacterDto
-        {
-            Id = c.Id,
-            CharacterType = c.CharacterType.ToString(),
-            TargetXRatio = c.TargetXRatio,
-            TargetYRatio = c.TargetYRatio,
-            ToleranceXRatio = c.ToleranceXRatio,
-            ToleranceYRatio = c.ToleranceYRatio,
-            ImageId = c.ImageId
-        }).ToList()
+      Characters = i.Characters.Select(c => new CharacterDto
+      {
+        Id = c.Id,
+        CharacterType = c.CharacterType.ToString(),
+        TargetXRatio = c.TargetXRatio,
+        TargetYRatio = c.TargetYRatio,
+        ToleranceXRatio = c.ToleranceXRatio,
+        ToleranceYRatio = c.ToleranceYRatio,
+        ImageId = c.ImageId
+      }).ToList()
     })
-    .FirstOrDefaultAsync();
+    .FirstOrDefaultAsync() ?? throw new ImageNotFoundException(id);
+
+    return image;
     
   }
 
@@ -61,7 +64,7 @@ public class ImageService: IImageService
   {
     bool exists = await _context.Images.AnyAsync(i => i.Name == dto.Name);
     if (exists)
-      throw new InvalidOperationException("Image with the same name already exists");
+      throw new ImageAlreadyExistsException(dto.Name);
     
     var image = new Image
     {

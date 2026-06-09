@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
-using WheresWaldoApi.Services;
 using Microsoft.EntityFrameworkCore;
+using WheresWaldoApi.Services;
 using WheresWaldoApi.Data;
+using WheresWaldoApi.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
@@ -39,6 +41,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

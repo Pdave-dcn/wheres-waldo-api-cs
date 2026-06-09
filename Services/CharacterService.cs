@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WheresWaldoApi.Data;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Models;
+using WheresWaldoApi.Exceptions;
 
 namespace WheresWaldoApi.Services;
 
@@ -14,11 +15,11 @@ public class CharacterService : ICharacterService
         _context = context;
     }
 
-    public async Task<CharacterDto?> GetCharacterByIdAsync(Guid id)
+    public async Task<CharacterDto> GetCharacterByIdAsync(Guid id)
     {
         var character = await _context.Characters.FindAsync(id);
         if (character is null)
-            return null;
+            throw new CharacterNotFoundException(id);
 
         return new CharacterDto
         {
@@ -36,12 +37,12 @@ public class CharacterService : ICharacterService
     {
         var image = await _context.Images.FindAsync(dto.ImageId);
         if (image is null)
-            throw new InvalidOperationException("Image does not exist");
+            throw new ImageNotFoundException(dto.ImageId);
 
         bool alreadyExists = await _context.Characters.AnyAsync(c => c.ImageId == dto.ImageId && c.CharacterType == dto.CharacterType);
 
         if (alreadyExists)
-            throw new InvalidOperationException($"{dto.CharacterType} is already assigned to this image");
+            throw new CharacterAlreadyExistsException(dto.CharacterType.ToString(), dto.ImageId);
 
         var character = new Character
         {

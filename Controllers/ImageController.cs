@@ -34,11 +34,6 @@ public class ImageController: ControllerBase
     _logger.LogInformation("Getting image with ID: {ImageId}", id);
 
     var image = await _imageService.GetImageByIdAsync(id);
-    if (image is null)
-    {
-      _logger.LogWarning("Image with ID: {ImageId} not found.", id);
-      return NotFound();
-    }
 
     _logger.LogInformation("Found image: {ImageName}", image.Name);
 
