@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using WheresWaldoApi.Services;
 using WheresWaldoApi.Data;
 using WheresWaldoApi.Middleware;
+using WheresWaldoApi.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,10 @@ builder.Services.AddControllers()
             new JsonStringEnumConverter()
         );
     });
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateImageDtoValidator>();
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<ICharacterService, CharacterService>();
