@@ -3,7 +3,7 @@ using WheresWaldoApi.DTOs;
 
 namespace WheresWaldoApi.Validators;
 
-public class CreateImageDtoValidator: AbstractValidator<CreateImageDto>
+public class CreateImageDtoValidator: AbstractValidator<AddImageDto>
 {
   public CreateImageDtoValidator()
   {

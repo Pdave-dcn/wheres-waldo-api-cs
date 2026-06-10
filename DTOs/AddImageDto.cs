@@ -1,7 +1,7 @@
 namespace WheresWaldoApi.DTOs;
 
 // todo: Update the name to AddImageDto instead
-public class CreateImageDto
+public class AddImageDto
 {
   public string Name {get; set;} = string.Empty;
 

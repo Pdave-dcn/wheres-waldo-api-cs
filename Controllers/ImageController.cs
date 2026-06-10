@@ -41,15 +41,15 @@ public class ImageController: ControllerBase
   }
 
   [HttpPost]
-  public async Task<IActionResult> CreateImage(
-     [FromBody] CreateImageDto dto
+  public async Task<IActionResult> AddImage(
+     [FromBody] AddImageDto dto
   )
   {
-    _logger.LogInformation("Creating new image with name: {ImageName}", dto.Name);
+    _logger.LogInformation("Adding new image with name: {ImageName}", dto.Name);
 
-    var image = await _imageService.CreateImageAsync(dto);
+    var image = await _imageService.AddImageAsync(dto);
     
-    _logger.LogInformation("Image created with ID: {ImageId}", image.Id);
+    _logger.LogInformation("Image added with ID: {ImageId}", image.Id);
 
     return CreatedAtAction(
     nameof(GetImageById),

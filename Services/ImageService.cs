@@ -60,7 +60,7 @@ public class ImageService: IImageService
     
   }
 
-  public async Task<Image> CreateImageAsync(CreateImageDto dto)
+  public async Task<Image> AddImageAsync(AddImageDto dto)
   {
     bool exists = await _context.Images.AnyAsync(i => i.Name == dto.Name);
     if (exists)

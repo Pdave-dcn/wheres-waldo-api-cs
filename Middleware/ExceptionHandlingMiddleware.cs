@@ -24,7 +24,7 @@ public class ExceptionHandlingMiddleware
     }
     catch(DomainException ex)
     {
-      _logger.LogError(
+      _logger.LogWarning(
         ex,
         "Domain exception occurred"
       );
