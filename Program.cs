@@ -24,6 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<ICompletionService, CompletionService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

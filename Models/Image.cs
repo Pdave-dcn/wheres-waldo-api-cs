@@ -17,4 +17,6 @@ public class Image
     public int OriginalHeight { get; set; }
 
     public ICollection<Character> Characters {get; set;} = [];
+
+    public ICollection<GameCompletion> Completions {get; set;} = [];
 }

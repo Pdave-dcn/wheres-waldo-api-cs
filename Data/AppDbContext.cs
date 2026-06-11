@@ -39,4 +39,5 @@ public class AppDbContext : DbContext
 
     public DbSet<Image> Images { get; set; }
     public DbSet<Character> Characters {get; set;}
+    public DbSet<GameCompletion> Completions {get; set;}
 }
