@@ -2,10 +2,12 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+
 using WheresWaldoApi.Services;
 using WheresWaldoApi.Data;
 using WheresWaldoApi.Middleware;
 using WheresWaldoApi.Validators;
+using WheresWaldoApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +50,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddCustomRateLimiters();
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -56,7 +60,8 @@ app.UseHttpsRedirection();
 
 app.UseCors("FrontendPolicy");
 
-app.MapControllers();
+app.UseRateLimiter();
 
+app.MapControllers();
 
 app.Run();

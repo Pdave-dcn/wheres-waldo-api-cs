@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using WheresWaldoApi.DTOs;
+using Microsoft.AspNetCore.RateLimiting;
 using WheresWaldoApi.Services;
 
 namespace WheresWaldoApi.Controllers;
@@ -12,6 +12,7 @@ public class LeaderboardController(ILeaderboardService leaderboardService, ILogg
     private readonly ILogger _logger = logger;
 
     [HttpGet("leaderboard")]
+    [EnableRateLimiting("LeaderboardView")]
     public async Task<IActionResult> GetLeaderboardForImage(Guid imageId)
     {
       _logger.LogInformation("Getting leaderboard for image ID: {ImageId}", imageId);

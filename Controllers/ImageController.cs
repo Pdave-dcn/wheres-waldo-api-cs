@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Services;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace WheresWaldoApi.Controllers;
 
@@ -18,6 +19,7 @@ public class ImageController: ControllerBase
   }
 
   [HttpGet]
+  [EnableRateLimiting("ImageSelection")]
   public async Task<IActionResult> GetAllImages()
   {
     _logger.LogInformation("Getting all images.");
@@ -29,6 +31,7 @@ public class ImageController: ControllerBase
   }
 
   [HttpGet("{id}")]
+  [EnableRateLimiting("ImageSelection")]
   public async Task<IActionResult> GetImageById(Guid id)
   {
     _logger.LogInformation("Getting image with ID: {ImageId}", id);
@@ -41,6 +44,7 @@ public class ImageController: ControllerBase
   }
 
   [HttpPost]
+  [EnableRateLimiting("ImageUpload")]
   public async Task<IActionResult> AddImage(
      [FromBody] AddImageDto dto
   )

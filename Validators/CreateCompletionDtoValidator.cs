@@ -13,8 +13,5 @@ public class CreateGameCompletionValidator : AbstractValidator<CreateGameComplet
 
     RuleFor(x => x.TimeTaken)
         .GreaterThan(0);
-
-    RuleFor(x => x.ImageId)
-        .NotEmpty();
   }
 }

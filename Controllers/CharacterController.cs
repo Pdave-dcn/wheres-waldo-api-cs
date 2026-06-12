@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Services;
 
@@ -18,6 +19,7 @@ public class CharacterController: ControllerBase
   }
 
   [HttpGet("{id}")]
+  [EnableRateLimiting("CharacterSelection")]
   public async Task<IActionResult> GetCharacterById(Guid id)
   {
     _logger.LogInformation("Getting character with ID: {CharacterId}", id);
@@ -29,6 +31,7 @@ public class CharacterController: ControllerBase
   }
 
   [HttpPost]
+  [EnableRateLimiting("CharacterAddition")]
   public async Task<IActionResult> AddCharacter([FromBody] AddCharacterDto dto)
   {
     _logger.LogInformation("Adding new character with name: {CharacterName}", dto.CharacterType);

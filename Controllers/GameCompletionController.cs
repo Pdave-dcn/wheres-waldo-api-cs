@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Services;
 
@@ -12,6 +13,7 @@ public class GameCompletionController(ICompletionService completionService, ILog
     private readonly ILogger<GameCompletionController> _logger = logger;
 
   [HttpPost("completions")]
+  [EnableRateLimiting("CompletionCreation")]
     public async Task<IActionResult> CreateCompletion(Guid imageId, [FromBody] CreateGameCompletionDto dto)
     {
       _logger.LogInformation("Creating game completion for player: {PlayerName}", dto.PlayerName);
@@ -23,6 +25,7 @@ public class GameCompletionController(ICompletionService completionService, ILog
     }
 
     [HttpGet("completions")]
+    [EnableRateLimiting("CompletionsView")]
     public async Task<IActionResult> GetCompletionsByImageId(Guid imageId)
     {
       _logger.LogInformation("Getting completions for image ID: {ImageId}", imageId);
