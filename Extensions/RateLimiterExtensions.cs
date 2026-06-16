@@ -31,7 +31,8 @@ public static class RateLimiterExtensions
                 new { Name = "CharacterSelection",  Limit = 30, Window = TimeSpan.FromMinutes(1) },
                 new { Name = "CharacterAddition",   Limit = 10, Window = TimeSpan.FromHours(1)   },
                 new { Name = "CompletionsView",     Limit = 60, Window = TimeSpan.FromMinutes(1) },
-                new { Name = "CompletionCreation",  Limit = 30, Window = TimeSpan.FromMinutes(1) }
+                new { Name = "CompletionCreation",  Limit = 30, Window = TimeSpan.FromMinutes(1) },
+                new { Name = "GuessSubmission",     Limit = 60, Window = TimeSpan.FromMinutes(1) }
             };
 
             foreach (var policy in policies)

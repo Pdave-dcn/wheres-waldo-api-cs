@@ -33,11 +33,34 @@ public class CharacterService : ICharacterService
         };
     }
 
+    public async Task<List<CharacterDto>> GetCharactersByImageIdAsync(Guid id)
+    {
+        var image = await _context.Images.FindAsync(id)
+            ?? throw new ImageNotFoundException(id);
+
+        var characters = await _context.Characters
+            .AsNoTracking()
+            .Where(c => c.ImageId == id)
+            .Select(c => new CharacterDto
+            {
+                Id = c.Id,
+                CharacterType = c.CharacterType.ToString(),
+                TargetXRatio = c.TargetXRatio,
+                TargetYRatio = c.TargetYRatio,
+                ToleranceXRatio = c.ToleranceXRatio,
+                ToleranceYRatio = c.ToleranceYRatio,
+                ImageId = c.ImageId
+            })
+            .ToListAsync();
+
+        return characters;
+
+    }
+
     public async Task<CharacterDto> AddCharacterAsync(AddCharacterDto dto)
     {
-        var image = await _context.Images.FindAsync(dto.ImageId);
-        if (image is null)
-            throw new ImageNotFoundException(dto.ImageId);
+        var image = await _context.Images.FindAsync(dto.ImageId)
+            ?? throw new ImageNotFoundException(dto.ImageId);
 
         bool alreadyExists = await _context.Characters.AnyAsync(c => c.ImageId == dto.ImageId && c.CharacterType == dto.CharacterType);
 

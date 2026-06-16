@@ -27,6 +27,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ICompletionService, CompletionService>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
+builder.Services.AddScoped<IGuessService, GuessService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

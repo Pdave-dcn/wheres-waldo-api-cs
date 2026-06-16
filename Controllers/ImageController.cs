@@ -7,16 +7,11 @@ namespace WheresWaldoApi.Controllers;
 
 [ApiController]
 [Route("api/images")]
-public class ImageController: ControllerBase
+public class ImageController(IImageService imageService, IGuessService guessService, ILogger<ImageController> logger) : ControllerBase
 {
-  private readonly IImageService _imageService;
-    private readonly ILogger<ImageController> _logger;
-
-  public ImageController(IImageService imageService, ILogger<ImageController> logger)
-  {
-    _imageService = imageService;
-    _logger = logger;
-  }
+  private readonly IImageService _imageService = imageService;
+  private readonly IGuessService _guessService = guessService;
+  private readonly ILogger<ImageController> _logger = logger;
 
   [HttpGet]
   [EnableRateLimiting("ImageSelection")]
@@ -60,6 +55,18 @@ public class ImageController: ControllerBase
     new { id = image.Id },
     image
     );
+  }
+
+  [HttpPost("{imageId}/guess")]
+  [EnableRateLimiting("GuessSubmission")]
+  public async Task<IActionResult> SubmitGuess(Guid imageId, [FromBody] VerifyGuessDto dto)
+  {
+    _logger.LogInformation("Submitting guess for image: {ImageId}", imageId);
+
+    var result = await _guessService.VerifyGuessAsync(imageId, dto);
+
+    _logger.LogInformation("Guess verified. Result: {IsCorrect}", result.Found);
+    return Ok(result);
   }
 
 }

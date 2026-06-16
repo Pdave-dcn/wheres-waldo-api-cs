@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+AGENTS.md
+FEATURE_SUGGESTIONS.md
