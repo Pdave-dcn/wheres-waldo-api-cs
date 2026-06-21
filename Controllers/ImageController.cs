@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
+
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Services;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace WheresWaldoApi.Controllers;
 
@@ -38,6 +40,7 @@ public class ImageController(IImageService imageService, IGuessService guessServ
     return Ok(image);
   }
 
+  [Authorize]
   [HttpPost]
   [EnableRateLimiting("ImageUpload")]
   public async Task<IActionResult> AddImage(

@@ -35,9 +35,16 @@ public class AppDbContext : DbContext
             .WithMany(i => i.Characters)
             .HasForeignKey(c => c.ImageId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        var user = modelBuilder.Entity<User>();
+        
+        user.HasIndex(u => u.Username).IsUnique();
+        user.HasIndex(u => u.Email).IsUnique();
+        user.Property(u => u.Role).HasConversion<string>();
     }
 
     public DbSet<Image> Images { get; set; }
     public DbSet<Character> Characters {get; set;}
     public DbSet<GameCompletion> Completions {get; set;}
+    public DbSet<User> Users {get; set;}
 }

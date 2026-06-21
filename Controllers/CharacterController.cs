@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Services;
 
@@ -30,6 +32,7 @@ public class CharacterController: ControllerBase
     return Ok(character);
   }
 
+  [Authorize]
   [HttpPost]
   [EnableRateLimiting("CharacterAddition")]
   public async Task<IActionResult> AddCharacter([FromBody] AddCharacterDto dto)

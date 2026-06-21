@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Services;
 

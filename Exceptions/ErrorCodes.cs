@@ -9,4 +9,10 @@ public static class ErrorCodes
   public const string CharacterAlreadyExists = "CHARACTER_ALREADY_EXISTS";
 
   public const string CharacterNotFound = "CHARACTER_NOT_FOUND";
+
+  public const string UsernameAlreadyExists = "USERNAME_ALREADY_EXISTS";
+
+  public const string EmailAlreadyExists = "EMAIL_ALREADY_EXISTS";
+
+  public const string InvalidCredentials = "INVALID_CREDENTIALS";
 }
