@@ -6,14 +6,9 @@ using WheresWaldoApi.Exceptions;
 
 namespace WheresWaldoApi.Services;
 
-public class CharacterService : ICharacterService
+public class CharacterService(AppDbContext context) : ICharacterService
 {
-    private readonly AppDbContext _context;
-
-    public CharacterService(AppDbContext context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     public async Task<CharacterDto> GetCharacterByIdAsync(Guid id)
     {

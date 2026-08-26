@@ -1,5 +1,3 @@
-using WheresWaldoApi.Models;
-
 namespace WheresWaldoApi.DTOs;
 
 public class GuessResultDto

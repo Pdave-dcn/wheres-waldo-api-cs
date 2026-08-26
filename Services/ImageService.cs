@@ -6,14 +6,9 @@ using WheresWaldoApi.Exceptions;
 
 namespace WheresWaldoApi.Services;
 
-public class ImageService: IImageService
+public class ImageService(AppDbContext context) : IImageService
 {
-  private readonly AppDbContext _context;
-
-  public ImageService(AppDbContext context)
-  {
-    _context = context;
-  }
+  private readonly AppDbContext _context = context;
 
   public async Task<List<ImageListItemDto>> GetAllImagesAsync()
   {

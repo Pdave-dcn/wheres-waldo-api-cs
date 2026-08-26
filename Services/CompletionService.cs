@@ -3,7 +3,6 @@ using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Models;
 using WheresWaldoApi.Data;
 using WheresWaldoApi.Exceptions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace WheresWaldoApi.Services;
 
@@ -11,7 +10,7 @@ public class CompletionService(AppDbContext context) : ICompletionService
 {
   private readonly AppDbContext _context = context;
 
-  public async Task<GameCompletionDto> CreateCompletionAsync(Guid imageId, [FromBody] CreateGameCompletionDto dto)
+  public async Task<GameCompletionDto> CreateCompletionAsync(Guid imageId, CreateGameCompletionDto dto)
   {
     var image = await _context.Images.FindAsync(imageId)
       ?? throw new ImageNotFoundException(imageId);

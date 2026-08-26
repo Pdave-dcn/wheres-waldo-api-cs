@@ -9,16 +9,10 @@ namespace WheresWaldoApi.Controllers;
 
 [ApiController]
 [Route("api/characters")]
-public class CharacterController: ControllerBase
+public class CharacterController(ICharacterService characterService, ILogger<CharacterController> logger) : ControllerBase
 {
-  private readonly ICharacterService _characterService;
-  private readonly ILogger<CharacterController> _logger;
-
-  public CharacterController(ICharacterService characterService, ILogger<CharacterController> logger)
-  {
-    _characterService = characterService;
-    _logger = logger;
-  }
+  private readonly ICharacterService _characterService = characterService;
+  private readonly ILogger<CharacterController> _logger = logger;
 
   [HttpGet("{id}")]
   [EnableRateLimiting("CharacterSelection")]
