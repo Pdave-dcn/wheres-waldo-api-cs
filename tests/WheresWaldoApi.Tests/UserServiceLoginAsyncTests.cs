@@ -37,6 +37,7 @@ public class UserServiceLoginAsyncTests : IDisposable
   {
     _context.Database.EnsureDeleted();
     _context.Dispose();
+    GC.SuppressFinalize(this);
   }
 
   private async Task<User> SeedUserAsync(string username, string email, string password, UserRole role = UserRole.User)
