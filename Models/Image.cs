@@ -16,6 +16,8 @@ public class Image
 
     public int OriginalHeight { get; set; }
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     public ICollection<Character> Characters {get; set;} = [];
 
     public ICollection<GameCompletion> Completions {get; set;} = [];

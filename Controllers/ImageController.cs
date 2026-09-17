@@ -17,19 +17,22 @@ public class ImageController(IImageService imageService, IGuessService guessServ
 
   [HttpGet]
   [EnableRateLimiting("ImageSelection")]
-  public async Task<IActionResult> GetAllImages()
+  public async Task<ActionResult<PageResultDto<ImageListItemDto>>> GetAllImages(
+    [FromQuery] string? cursor = null,
+    [FromQuery] int limit = 20
+  )
   {
     _logger.LogInformation("Getting all images.");
 
-    var images = await _imageService.GetAllImagesAsync();
+    var result = await _imageService.GetAllImagesAsync(cursor, limit);
 
-    _logger.LogInformation("Retrieved all images. Count: {ImageCount}", images.Count);
-    return Ok(images);
+    _logger.LogInformation("Retrieved all images. Count: {ImageCount}", result.Items.Count);
+    return Ok(result);
   }
 
   [HttpGet("{id}")]
   [EnableRateLimiting("ImageSelection")]
-  public async Task<IActionResult> GetImageById(Guid id)
+  public async Task<ActionResult<ImageDetailsDto>> GetImageById(Guid id)
   {
     _logger.LogInformation("Getting image with ID: {ImageId}", id);
 

@@ -20,6 +20,10 @@ public class AppDbContext : DbContext
         image.HasIndex(i => i.ImageUrl).IsUnique();
         image.HasIndex(i => i.PublicId).IsUnique();
 
+        // Composite index for keyset pagination
+        image.HasIndex(i => new { i.CreatedAt, i.Id })
+             .HasDatabaseName("IX_Images_CreatedAt_Id");
+
         var character = modelBuilder.Entity<Character>();
 
         character
