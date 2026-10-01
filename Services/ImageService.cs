@@ -114,5 +114,45 @@ public class ImageService(AppDbContext context) : IImageService
     await _context.SaveChangesAsync();
     return image;
   }
+
+  public async Task<ImageDetailsDto> UpdateImageAsync(Guid id, UpdateImageDto dto)
+  {
+    var image = await _context.Images
+        .Include(i => i.Characters)
+        .FirstOrDefaultAsync(i => i.Id == id);
+
+    if (image == null)
+        throw new ImageNotFoundException(id);
+    
+    image.Name = dto.Name ?? image.Name;
+    image.Description = dto.Description ?? image.Description;
+    image.ImageUrl = dto.ImageUrl ?? image.ImageUrl;
+    image.PublicId = dto.PublicId ?? image.PublicId;
+    image.OriginalHeight = dto.OriginalHeight ?? image.OriginalHeight;
+    image.OriginalWidth = dto.OriginalWidth ?? image.OriginalWidth;
+
+    await _context.SaveChangesAsync();
+
+    return new ImageDetailsDto
+    {
+        Id = image.Id,
+        Name = image.Name,
+        Description = image.Description,
+        ImageUrl = image.ImageUrl,
+        OriginalWidth = image.OriginalWidth,
+        OriginalHeight = image.OriginalHeight,
+        Characters = image.Characters.Select(c => new CharacterDto
+        {
+            Id = c.Id,
+            CharacterType = c.CharacterType.ToString(),
+            TargetXRatio = c.TargetXRatio,
+            TargetYRatio = c.TargetYRatio,
+            ToleranceXRatio = c.ToleranceXRatio,
+            ToleranceYRatio = c.ToleranceYRatio,
+            ImageId = c.ImageId
+        }).ToList()
+    };
+
+  }
   
 }

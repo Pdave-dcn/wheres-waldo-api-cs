@@ -10,4 +10,6 @@ public interface IImageService
   Task<ImageDetailsDto> GetImageByIdAsync(Guid id);
 
   Task<Image> AddImageAsync(AddImageDto dto);
+
+  Task <ImageDetailsDto> UpdateImageAsync(Guid id, UpdateImageDto dto);
 }

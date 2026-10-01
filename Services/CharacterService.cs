@@ -86,4 +86,29 @@ public class CharacterService(AppDbContext context) : ICharacterService
             ImageId = character.ImageId
         };
     }
+
+    public async Task<CharacterDto> UpdateCharacterAsync(Guid id, UpdateCharacterDto dto)
+    {
+        var character = await _context.Characters.FindAsync(id)
+            ?? throw new CharacterNotFoundException(id);
+
+        character.CharacterType = dto.CharacterType ?? character.CharacterType;
+        character.TargetXRatio = dto.TargetXRatio ?? character.TargetXRatio;
+        character.TargetYRatio = dto.TargetYRatio ?? character.TargetYRatio;
+        character.ToleranceXRatio = dto.ToleranceXRatio ?? character.ToleranceXRatio;
+        character.ToleranceYRatio = dto.ToleranceYRatio ?? character.ToleranceYRatio;
+
+        await _context.SaveChangesAsync();
+
+        return new CharacterDto
+        {
+            Id = character.Id,
+            CharacterType = character.CharacterType.ToString(),
+            TargetXRatio = character.TargetXRatio,
+            TargetYRatio = character.TargetYRatio,
+            ToleranceXRatio = character.ToleranceXRatio,
+            ToleranceYRatio = character.ToleranceYRatio,
+            ImageId = character.ImageId
+        };
+    }
 }

@@ -12,4 +12,6 @@ public interface ICharacterService
     Task<List<CharacterDto>> GetCharactersByImageIdAsync(Guid id);
 
     Task<CharacterDto> AddCharacterAsync(AddCharacterDto dto);
+
+    Task<CharacterDto> UpdateCharacterAsync(Guid id, UpdateCharacterDto dto);
 }
