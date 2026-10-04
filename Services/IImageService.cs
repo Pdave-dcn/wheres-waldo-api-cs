@@ -13,4 +13,6 @@ public interface IImageService
   Task<Image> AddImageAsync(AddImageDto dto, ClaimsPrincipal user);
 
   Task <ImageDetailsDto> UpdateImageAsync(Guid id, UpdateImageDto dto, ClaimsPrincipal user);
+
+  Task DeleteImageAsync(Guid id, ClaimsPrincipal user);
 }

@@ -89,4 +89,17 @@ public class ImageController(IImageService imageService, IGuessService guessServ
     return Ok(result);
   }
 
+  [Authorize]
+  [HttpDelete("{id}")]
+  [EnableRateLimiting("ImageDeletion")]
+  public async Task<IActionResult> DeleteImage(Guid id)
+  {
+    _logger.LogInformation("Deleting image with ID: {ImageId}", id);
+
+    await _imageService.DeleteImageAsync(id, User);
+
+    _logger.LogInformation("Image deleted with ID: {ImageId}", id);
+    return NoContent();
+  }
+
 }

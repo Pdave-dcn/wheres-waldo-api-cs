@@ -122,4 +122,18 @@ public class CharacterService(AppDbContext context) : ICharacterService
             ImageId = character.ImageId
         };
     }
+
+    public async Task DeleteCharacterAsync(Guid id, ClaimsPrincipal user)
+    {
+        if (!user.IsInRole("Admin"))
+        {
+            throw new ForbiddenException();
+        }
+
+        var character = await _context.Characters.FindAsync(id)
+            ?? throw new CharacterNotFoundException(id);
+
+        _context.Characters.Remove(character);
+        await _context.SaveChangesAsync();
+    }
 }

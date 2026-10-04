@@ -15,4 +15,6 @@ public interface ICharacterService
     Task<CharacterDto> AddCharacterAsync(AddCharacterDto dto, ClaimsPrincipal user);
 
     Task<CharacterDto> UpdateCharacterAsync(Guid id, UpdateCharacterDto dto, ClaimsPrincipal user);
+
+    Task DeleteCharacterAsync(Guid id, ClaimsPrincipal user);
 }

@@ -51,4 +51,17 @@ public class CharacterController(ICharacterService characterService, ILogger<Cha
     _logger.LogInformation("Character updated with ID: {CharacterId}", character.Id);
     return Ok(character);
   }
+
+  [Authorize]
+  [HttpDelete("{id}")]
+  [EnableRateLimiting("CharacterDeletion")]
+  public async Task<IActionResult> DeleteCharacter(Guid id)
+  {
+    _logger.LogInformation("Deleting character with ID: {CharacterId}", id);
+
+    await _characterService.DeleteCharacterAsync(id, User);
+    
+    _logger.LogInformation("Character deleted with ID: {CharacterId}", id);
+    return NoContent();
+  }
 }

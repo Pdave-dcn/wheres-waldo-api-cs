@@ -166,4 +166,16 @@ public class ImageService(AppDbContext context) : IImageService
 
   }
   
+  public async Task DeleteImageAsync(Guid id, ClaimsPrincipal user)
+  {
+    if(!user.IsInRole("Admin"))
+    {
+        throw new ForbiddenException();
+    }
+
+    var image = await _context.Images.FindAsync(id) ?? throw new ImageNotFoundException(id);    
+
+    _context.Images.Remove(image);
+    await _context.SaveChangesAsync();
+  }
 }
