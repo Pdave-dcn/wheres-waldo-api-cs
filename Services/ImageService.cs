@@ -4,6 +4,7 @@ using WheresWaldoApi.Models;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Exceptions;
 using WheresWaldoApi.Helpers;
+using System.Security.Claims;
 
 namespace WheresWaldoApi.Services;
 
@@ -94,8 +95,13 @@ public class ImageService(AppDbContext context) : IImageService
     
   }
 
-  public async Task<Image> AddImageAsync(AddImageDto dto)
+  public async Task<Image> AddImageAsync(AddImageDto dto, ClaimsPrincipal user)
   {
+    if(!user.IsInRole("Admin"))
+    {
+        throw new ForbiddenException();
+    }
+
     bool exists = await _context.Images.AnyAsync(i => i.Name == dto.Name);
     if (exists)
       throw new ImageAlreadyExistsException(dto.Name);
@@ -115,8 +121,13 @@ public class ImageService(AppDbContext context) : IImageService
     return image;
   }
 
-  public async Task<ImageDetailsDto> UpdateImageAsync(Guid id, UpdateImageDto dto)
+  public async Task<ImageDetailsDto> UpdateImageAsync(Guid id, UpdateImageDto dto, ClaimsPrincipal user)
   {
+    if(!user.IsInRole("Admin"))
+    {
+        throw new ForbiddenException();
+    }
+
     var image = await _context.Images
         .Include(i => i.Characters)
         .FirstOrDefaultAsync(i => i.Id == id);

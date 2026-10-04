@@ -27,9 +27,13 @@ public static class RateLimiterExtensions
             {
                 new { Name = "ImageSelection",      Limit = 30, Window = TimeSpan.FromMinutes(1) },
                 new { Name = "ImageUpload",         Limit = 10, Window = TimeSpan.FromHours(1)   },
+                new { Name = "ImageUpdate",         Limit = 10, Window = TimeSpan.FromHours(1)   },
+                new { Name = "ImageDeletion",       Limit = 10, Window = TimeSpan.FromHours(1)   },
                 new { Name = "LeaderboardView",     Limit = 60, Window = TimeSpan.FromMinutes(1) },
                 new { Name = "CharacterSelection",  Limit = 30, Window = TimeSpan.FromMinutes(1) },
                 new { Name = "CharacterAddition",   Limit = 10, Window = TimeSpan.FromHours(1)   },
+                new { Name = "CharacterUpdate",     Limit = 10, Window = TimeSpan.FromHours(1)   },
+                new { Name = "CharacterDeletion",   Limit = 10, Window = TimeSpan.FromHours(1)   },
                 new { Name = "CompletionsView",     Limit = 60, Window = TimeSpan.FromMinutes(1) },
                 new { Name = "CompletionCreation",  Limit = 30, Window = TimeSpan.FromMinutes(1) },
                 new { Name = "GuessSubmission",     Limit = 60, Window = TimeSpan.FromMinutes(1) },

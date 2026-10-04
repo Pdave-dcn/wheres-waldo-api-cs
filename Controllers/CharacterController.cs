@@ -33,9 +33,22 @@ public class CharacterController(ICharacterService characterService, ILogger<Cha
   {
     _logger.LogInformation("Adding new character with name: {CharacterName}", dto.CharacterType);
 
-    var character = await _characterService.AddCharacterAsync(dto);
+    var character = await _characterService.AddCharacterAsync(dto, User);
     
     _logger.LogInformation("Character added with ID: {CharacterId}", character.Id);
     return CreatedAtAction(nameof(GetCharacterById), new { id = character.Id }, character);
+  }
+
+  [Authorize]
+  [HttpPut("{id}")]
+  [EnableRateLimiting("CharacterUpdate")]
+  public async Task<IActionResult> UpdateCharacter(Guid id, [FromBody] UpdateCharacterDto dto)
+  {
+    _logger.LogInformation("Updating character with ID: {CharacterId}", id);
+
+    var character = await _characterService.UpdateCharacterAsync(id, dto, User);
+    
+    _logger.LogInformation("Character updated with ID: {CharacterId}", character.Id);
+    return Ok(character);
   }
 }

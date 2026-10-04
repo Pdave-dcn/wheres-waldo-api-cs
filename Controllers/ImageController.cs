@@ -52,7 +52,7 @@ public class ImageController(IImageService imageService, IGuessService guessServ
   {
     _logger.LogInformation("Adding new image with name: {ImageName}", dto.Name);
 
-    var image = await _imageService.AddImageAsync(dto);
+    var image = await _imageService.AddImageAsync(dto, User);
     
     _logger.LogInformation("Image added with ID: {ImageId}", image.Id);
 
@@ -63,13 +63,27 @@ public class ImageController(IImageService imageService, IGuessService guessServ
     );
   }
 
-  [HttpPost("{imageId}/guess")]
-  [EnableRateLimiting("GuessSubmission")]
-  public async Task<IActionResult> SubmitGuess(Guid imageId, [FromBody] VerifyGuessDto dto)
+  [Authorize]
+  [HttpPut("{id}")]
+  [EnableRateLimiting("ImageUpdate")]
+  public async Task<ActionResult<ImageDetailsDto>> UpdateImage(Guid id, [FromBody] UpdateImageDto dto)
   {
-    _logger.LogInformation("Submitting guess for image: {ImageId}", imageId);
+    _logger.LogInformation("Updating image with ID: {ImageId}", id);
 
-    var result = await _guessService.VerifyGuessAsync(imageId, dto);
+    var updatedImage = await _imageService.UpdateImageAsync(id, dto, User);
+
+    _logger.LogInformation("Image updated: {ImageName}", updatedImage.Name);
+
+    return updatedImage;
+  }
+
+  [HttpPost("{id}/guess")]
+  [EnableRateLimiting("GuessSubmission")]
+  public async Task<IActionResult> SubmitGuess(Guid id, [FromBody] VerifyGuessDto dto)
+  {
+    _logger.LogInformation("Submitting guess for image: {id}", id);
+
+    var result = await _guessService.VerifyGuessAsync(id, dto);
 
     _logger.LogInformation("Guess verified. Result: {IsCorrect}", result.Found);
     return Ok(result);

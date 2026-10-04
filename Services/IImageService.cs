@@ -1,5 +1,6 @@
 using WheresWaldoApi.Models;
 using WheresWaldoApi.DTOs;
+using System.Security.Claims;
 
 namespace WheresWaldoApi.Services;
 
@@ -9,7 +10,7 @@ public interface IImageService
 
   Task<ImageDetailsDto> GetImageByIdAsync(Guid id);
 
-  Task<Image> AddImageAsync(AddImageDto dto);
+  Task<Image> AddImageAsync(AddImageDto dto, ClaimsPrincipal user);
 
-  Task <ImageDetailsDto> UpdateImageAsync(Guid id, UpdateImageDto dto);
+  Task <ImageDetailsDto> UpdateImageAsync(Guid id, UpdateImageDto dto, ClaimsPrincipal user);
 }

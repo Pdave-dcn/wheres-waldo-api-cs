@@ -3,6 +3,7 @@ using WheresWaldoApi.Data;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Models;
 using WheresWaldoApi.Exceptions;
+using System.Security.Claims;
 
 namespace WheresWaldoApi.Services;
 
@@ -52,8 +53,13 @@ public class CharacterService(AppDbContext context) : ICharacterService
 
     }
 
-    public async Task<CharacterDto> AddCharacterAsync(AddCharacterDto dto)
+    public async Task<CharacterDto> AddCharacterAsync(AddCharacterDto dto, ClaimsPrincipal user)
     {
+        if (!user.IsInRole("Admin"))
+        {
+            throw new ForbiddenException();
+        }
+        
         var image = await _context.Images.FindAsync(dto.ImageId)
             ?? throw new ImageNotFoundException(dto.ImageId);
 
@@ -87,8 +93,13 @@ public class CharacterService(AppDbContext context) : ICharacterService
         };
     }
 
-    public async Task<CharacterDto> UpdateCharacterAsync(Guid id, UpdateCharacterDto dto)
+    public async Task<CharacterDto> UpdateCharacterAsync(Guid id, UpdateCharacterDto dto, ClaimsPrincipal user)
     {
+        if (!user.IsInRole("Admin"))
+        {
+            throw new ForbiddenException();
+        }
+
         var character = await _context.Characters.FindAsync(id)
             ?? throw new CharacterNotFoundException(id);
 
