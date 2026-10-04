@@ -5,6 +5,7 @@ using WheresWaldoApi.Models;
 using WheresWaldoApi.Services;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace WheresWaldoApi.Tests;
 
@@ -49,7 +50,7 @@ public class ImageServiceAddImageAsyncTests : IDisposable
   {
     var dto = BuildDto();
 
-    var result = await _imageService.AddImageAsync(dto);
+    var result = await _imageService.AddImageAsync(dto, TestUsers.Admin());
 
     Assert.NotNull(result);
     Assert.NotEqual(Guid.Empty, result.Id);
@@ -68,10 +69,10 @@ public class ImageServiceAddImageAsyncTests : IDisposable
   [Fact]
   public async Task AddImageAsync_WithDuplicateName_ShouldThrowImageAlreadyExistsException()
   {
-    await _imageService.AddImageAsync(BuildDto("Beach Scene"));
+    await _imageService.AddImageAsync(BuildDto("Beach Scene"), TestUsers.Admin());
 
     var ex = await Assert.ThrowsAsync<ImageAlreadyExistsException>(
-      () => _imageService.AddImageAsync(BuildDto("Beach Scene")));
+      () => _imageService.AddImageAsync(BuildDto("Beach Scene"), TestUsers.Admin()));
 
     Assert.Equal("Image 'Beach Scene' already exists.", ex.Message);
   }
@@ -79,10 +80,10 @@ public class ImageServiceAddImageAsyncTests : IDisposable
   [Fact]
   public async Task AddImageAsync_WithDuplicateName_ShouldNotPersistSecondImage()
   {
-    await _imageService.AddImageAsync(BuildDto("Beach Scene"));
+    await _imageService.AddImageAsync(BuildDto("Beach Scene"), TestUsers.Admin());
 
     await Assert.ThrowsAsync<ImageAlreadyExistsException>(
-      () => _imageService.AddImageAsync(BuildDto("Beach Scene")));
+      () => _imageService.AddImageAsync(BuildDto("Beach Scene"), TestUsers.Admin()));
 
     Assert.Equal(1, await _context.Images.CountAsync());
   }
@@ -90,10 +91,20 @@ public class ImageServiceAddImageAsyncTests : IDisposable
   [Fact]
   public async Task AddImageAsync_WithDistinctNames_ShouldSucceedForBoth()
   {
-    var first = await _imageService.AddImageAsync(BuildDto("Beach Scene"));
-    var second = await _imageService.AddImageAsync(BuildDto("Mountain Scene"));
+    var first = await _imageService.AddImageAsync(BuildDto("Beach Scene"), TestUsers.Admin());
+    var second = await _imageService.AddImageAsync(BuildDto("Mountain Scene"), TestUsers.Admin());
 
     Assert.NotEqual(first.Id, second.Id);
     Assert.Equal(2, await _context.Images.CountAsync());
+  }
+
+  [Fact]
+  public async Task AddImageAsync_WithNonAdminUser_ShouldThrowForbiddenException()
+  {
+    var ex = await Assert.ThrowsAsync<ForbiddenException>(
+      () => _imageService.AddImageAsync(BuildDto(), TestUsers.RegularUser()));
+
+    Assert.Equal(ErrorCodes.Forbidden, ex.Code);
+    Assert.Equal(StatusCodes.Status403Forbidden, ex.StatusCode);
   }
 }

@@ -5,6 +5,7 @@ using WheresWaldoApi.Models;
 using WheresWaldoApi.Services;
 using WheresWaldoApi.DTOs;
 using WheresWaldoApi.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace WheresWaldoApi.Tests;
 
@@ -65,7 +66,7 @@ public class CharacterServiceAddCharacterAsyncTests : IDisposable
     var image = await SeedImageAsync();
     var dto = BuildDto(image.Id);
 
-    var result = await _characterService.AddCharacterAsync(dto);
+    var result = await _characterService.AddCharacterAsync(dto, TestUsers.Admin());
 
     Assert.NotNull(result);
     Assert.NotEqual(Guid.Empty, result.Id);
@@ -83,7 +84,7 @@ public class CharacterServiceAddCharacterAsyncTests : IDisposable
     var image = await SeedImageAsync();
     var dto = BuildDto(image.Id);
 
-    var result = await _characterService.AddCharacterAsync(dto);
+    var result = await _characterService.AddCharacterAsync(dto, TestUsers.Admin());
 
     var persisted = await _context.Characters.FindAsync(result.Id);
     Assert.NotNull(persisted);
@@ -97,7 +98,7 @@ public class CharacterServiceAddCharacterAsyncTests : IDisposable
     var dto = BuildDto(Guid.NewGuid());
 
     await Assert.ThrowsAsync<ImageNotFoundException>(
-      () => _characterService.AddCharacterAsync(dto));
+      () => _characterService.AddCharacterAsync(dto, TestUsers.Admin()));
   }
 
   [Fact]
@@ -106,7 +107,7 @@ public class CharacterServiceAddCharacterAsyncTests : IDisposable
     var dto = BuildDto(Guid.NewGuid());
 
     await Assert.ThrowsAsync<ImageNotFoundException>(
-      () => _characterService.AddCharacterAsync(dto));
+      () => _characterService.AddCharacterAsync(dto, TestUsers.Admin()));
 
     Assert.Empty(_context.Characters);
   }
@@ -116,22 +117,22 @@ public class CharacterServiceAddCharacterAsyncTests : IDisposable
   {
     var image = await SeedImageAsync();
     var firstDto = BuildDto(image.Id, CharacterType.Waldo);
-    await _characterService.AddCharacterAsync(firstDto);
+    await _characterService.AddCharacterAsync(firstDto, TestUsers.Admin());
 
     var duplicateDto = BuildDto(image.Id, CharacterType.Waldo);
 
     await Assert.ThrowsAsync<CharacterAlreadyExistsException>(
-      () => _characterService.AddCharacterAsync(duplicateDto));
+      () => _characterService.AddCharacterAsync(duplicateDto, TestUsers.Admin()));
   }
 
   [Fact]
   public async Task AddCharacterAsync_WithDuplicateCharacterType_ShouldNotCreateSecondCharacter()
   {
     var image = await SeedImageAsync();
-    await _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Waldo));
+    await _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Waldo), TestUsers.Admin());
 
     await Assert.ThrowsAsync<CharacterAlreadyExistsException>(
-      () => _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Waldo)));
+      () => _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Waldo), TestUsers.Admin()));
 
     var count = await _context.Characters.CountAsync(c => c.ImageId == image.Id);
     Assert.Equal(1, count);
@@ -143,8 +144,8 @@ public class CharacterServiceAddCharacterAsyncTests : IDisposable
     var imageOne = await SeedImageAsync();
     var imageTwo = await SeedImageAsync();
 
-    var resultOne = await _characterService.AddCharacterAsync(BuildDto(imageOne.Id, CharacterType.Waldo));
-    var resultTwo = await _characterService.AddCharacterAsync(BuildDto(imageTwo.Id, CharacterType.Waldo));
+    var resultOne = await _characterService.AddCharacterAsync(BuildDto(imageOne.Id, CharacterType.Waldo), TestUsers.Admin());
+    var resultTwo = await _characterService.AddCharacterAsync(BuildDto(imageTwo.Id, CharacterType.Waldo), TestUsers.Admin());
 
     Assert.NotEqual(resultOne.Id, resultTwo.Id);
     Assert.Equal(imageOne.Id, resultOne.ImageId);
@@ -156,11 +157,24 @@ public class CharacterServiceAddCharacterAsyncTests : IDisposable
   {
     var image = await SeedImageAsync();
 
-    var waldo = await _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Waldo));
-    var wizard = await _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Wizard));
+    var waldo = await _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Waldo), TestUsers.Admin());
+    var wizard = await _characterService.AddCharacterAsync(BuildDto(image.Id, CharacterType.Wizard), TestUsers.Admin());
 
     Assert.NotEqual(waldo.Id, wizard.Id);
     var count = await _context.Characters.CountAsync(c => c.ImageId == image.Id);
     Assert.Equal(2, count);
+  }
+
+  [Fact]
+  public async Task AddCharacterAsync_WithNonAdminUser_ShouldThrowForbiddenException()
+  {
+    var image = await SeedImageAsync();
+    var dto = BuildDto(image.Id);
+
+    var ex = await Assert.ThrowsAsync<ForbiddenException>(
+      () => _characterService.AddCharacterAsync(dto, TestUsers.RegularUser()));
+
+    Assert.Equal(ErrorCodes.Forbidden, ex.Code);
+    Assert.Equal(StatusCodes.Status403Forbidden, ex.StatusCode);
   }
 }
